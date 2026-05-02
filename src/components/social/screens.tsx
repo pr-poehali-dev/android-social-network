@@ -53,6 +53,172 @@ export const FeedScreen = () => {
 export const ProfileScreen = () => {
   const user = ME;
   const userPosts = POSTS.filter(p => p.userId === 1);
+  const [showSettings, setShowSettings] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [name, setName] = useState(user.name);
+  const [bio, setBio] = useState(user.bio);
+  const [notifLikes, setNotifLikes] = useState(true);
+  const [notifComments, setNotifComments] = useState(true);
+  const [notifFollows, setNotifFollows] = useState(true);
+  const [privateProfile, setPrivateProfile] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+
+  if (showSettings) {
+    return (
+      <div className="flex flex-col h-full animate-slide-in-right">
+        <div className="flex items-center gap-3 px-5 py-4 flex-shrink-0 glass-dark">
+          <button onClick={() => setShowSettings(false)} style={{ color: "rgba(255,255,255,0.6)" }}>
+            <Icon name="ArrowLeft" size={22} />
+          </button>
+          <h2 className="text-lg font-black text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>Настройки</h2>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+          {/* Уведомления */}
+          <div className="glass rounded-2xl overflow-hidden animate-slide-up" style={{ opacity: 0, animationFillMode: "forwards" }}>
+            <p className="px-4 pt-3 pb-2 text-xs font-semibold" style={{ color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em" }}>УВЕДОМЛЕНИЯ</p>
+            {[
+              { label: "Лайки", icon: "Heart", value: notifLikes, set: setNotifLikes },
+              { label: "Комментарии", icon: "MessageCircle", value: notifComments, set: setNotifComments },
+              { label: "Подписки", icon: "UserPlus", value: notifFollows, set: setNotifFollows },
+            ].map(item => (
+              <div key={item.label} className="flex items-center justify-between px-4 py-3"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                <div className="flex items-center gap-3">
+                  <Icon name={item.icon} size={18} style={{ color: "var(--neon-purple)" }} />
+                  <span className="text-sm text-white">{item.label}</span>
+                </div>
+                <button onClick={() => item.set(!item.value)}
+                  className="relative w-11 h-6 rounded-full transition-all duration-300"
+                  style={{ background: item.value ? "var(--neon-purple)" : "rgba(255,255,255,0.15)" }}>
+                  <span className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-300"
+                    style={{ left: item.value ? "calc(100% - 22px)" : "2px" }} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Приватность */}
+          <div className="glass rounded-2xl overflow-hidden animate-slide-up delay-100" style={{ opacity: 0, animationFillMode: "forwards" }}>
+            <p className="px-4 pt-3 pb-2 text-xs font-semibold" style={{ color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em" }}>ПРИВАТНОСТЬ</p>
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+              <div className="flex items-center gap-3">
+                <Icon name="Lock" size={18} style={{ color: "var(--neon-cyan)" }} />
+                <div>
+                  <p className="text-sm text-white">Закрытый профиль</p>
+                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>Только подписчики видят посты</p>
+                </div>
+              </div>
+              <button onClick={() => setPrivateProfile(!privateProfile)}
+                className="relative w-11 h-6 rounded-full transition-all duration-300"
+                style={{ background: privateProfile ? "var(--neon-purple)" : "rgba(255,255,255,0.15)" }}>
+                <span className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-300"
+                  style={{ left: privateProfile ? "calc(100% - 22px)" : "2px" }} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+              <div className="flex items-center gap-3">
+                <Icon name="Moon" size={18} style={{ color: "var(--neon-cyan)" }} />
+                <span className="text-sm text-white">Тёмная тема</span>
+              </div>
+              <button onClick={() => setDarkMode(!darkMode)}
+                className="relative w-11 h-6 rounded-full transition-all duration-300"
+                style={{ background: darkMode ? "var(--neon-purple)" : "rgba(255,255,255,0.15)" }}>
+                <span className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-300"
+                  style={{ left: darkMode ? "calc(100% - 22px)" : "2px" }} />
+              </button>
+            </div>
+          </div>
+
+          {/* Аккаунт */}
+          <div className="glass rounded-2xl overflow-hidden animate-slide-up delay-200" style={{ opacity: 0, animationFillMode: "forwards" }}>
+            <p className="px-4 pt-3 pb-2 text-xs font-semibold" style={{ color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em" }}>АККАУНТ</p>
+            {[
+              { label: "Изменить пароль", icon: "KeyRound", color: "rgba(255,255,255,0.5)" },
+              { label: "Привязать аккаунты", icon: "Link", color: "rgba(255,255,255,0.5)" },
+              { label: "Скачать данные", icon: "Download", color: "rgba(255,255,255,0.5)" },
+            ].map(item => (
+              <button key={item.label} className="w-full flex items-center justify-between px-4 py-3 transition-all"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+                onMouseEnter={e => (e.currentTarget.style.background = "rgba(155,89,255,0.08)")}
+                onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+                <div className="flex items-center gap-3">
+                  <Icon name={item.icon} size={18} style={{ color: item.color }} />
+                  <span className="text-sm text-white">{item.label}</span>
+                </div>
+                <Icon name="ChevronRight" size={16} style={{ color: "rgba(255,255,255,0.25)" }} />
+              </button>
+            ))}
+          </div>
+
+          {/* Выход */}
+          <button className="w-full glass rounded-2xl px-4 py-3.5 flex items-center gap-3 animate-slide-up delay-300"
+            style={{ opacity: 0, animationFillMode: "forwards", border: "1px solid rgba(255,45,120,0.3)" }}>
+            <Icon name="LogOut" size={18} style={{ color: "var(--neon-pink)" }} />
+            <span className="text-sm font-semibold" style={{ color: "var(--neon-pink)" }}>Выйти из аккаунта</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (editMode) {
+    return (
+      <div className="flex flex-col h-full animate-slide-in-right">
+        <div className="flex items-center justify-between px-5 py-4 flex-shrink-0 glass-dark">
+          <button onClick={() => setEditMode(false)} style={{ color: "rgba(255,255,255,0.6)" }}>
+            <Icon name="ArrowLeft" size={22} />
+          </button>
+          <h2 className="text-lg font-black text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>Редактировать</h2>
+          <button onClick={() => setEditMode(false)} className="btn-gradient rounded-xl px-3 py-1.5 text-xs font-semibold text-white">
+            Сохранить
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+          <div className="flex flex-col items-center gap-3 py-2 animate-slide-up" style={{ opacity: 0, animationFillMode: "forwards" }}>
+            <div className="relative">
+              <div className="story-ring" style={{ borderRadius: "50%", padding: 3 }}>
+                <img src={user.avatar} alt="" className="rounded-full bg-[#1a1a2e]" style={{ width: 80, height: 80 }} />
+              </div>
+              <button className="absolute bottom-0 right-0 btn-gradient w-7 h-7 rounded-full flex items-center justify-center">
+                <Icon name="Camera" size={13} className="text-white" />
+              </button>
+            </div>
+            <span className="text-xs" style={{ color: "var(--neon-purple)" }}>Изменить фото</span>
+          </div>
+
+          {[
+            { label: "Имя", value: name, set: setName, placeholder: "Ваше имя" },
+            { label: "Био", value: bio, set: setBio, placeholder: "Расскажите о себе" },
+          ].map((field, i) => (
+            <div key={field.label} className="animate-slide-up"
+              style={{ animationDelay: `${i * 0.1}s`, opacity: 0, animationFillMode: "forwards" }}>
+              <p className="text-xs font-semibold mb-2" style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em" }}>
+                {field.label.toUpperCase()}
+              </p>
+              <input
+                className="input-dark w-full rounded-2xl px-4 py-3 text-sm"
+                value={field.value}
+                onChange={e => field.set(e.target.value)}
+                placeholder={field.placeholder}
+              />
+            </div>
+          ))}
+
+          <div className="animate-slide-up delay-200" style={{ opacity: 0, animationFillMode: "forwards" }}>
+            <p className="text-xs font-semibold mb-2" style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em" }}>USERNAME</p>
+            <input className="input-dark w-full rounded-2xl px-4 py-3 text-sm" defaultValue={user.username} />
+          </div>
+
+          <div className="animate-slide-up delay-300" style={{ opacity: 0, animationFillMode: "forwards" }}>
+            <p className="text-xs font-semibold mb-2" style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em" }}>САЙТ</p>
+            <input className="input-dark w-full rounded-2xl px-4 py-3 text-sm" placeholder="https://yoursite.com" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full overflow-y-auto">
@@ -60,6 +226,11 @@ export const ProfileScreen = () => {
         <div className="absolute inset-0"
           style={{ background: "linear-gradient(135deg, rgba(155,89,255,0.4) 0%, rgba(0,229,255,0.2) 50%, rgba(255,45,120,0.3) 100%)" }} />
         <div className="absolute inset-0 bg-grid opacity-30" />
+        <button onClick={() => setShowSettings(true)}
+          className="absolute top-4 right-4 glass rounded-xl p-2"
+          style={{ color: "rgba(255,255,255,0.7)" }}>
+          <Icon name="Settings" size={20} />
+        </button>
       </div>
 
       <div className="px-5 pb-4 flex-shrink-0" style={{ marginTop: -50 }}>
@@ -67,14 +238,16 @@ export const ProfileScreen = () => {
           <div className="story-ring" style={{ borderRadius: "50%", padding: 3 }}>
             <img src={user.avatar} alt="" className="rounded-full bg-[#1a1a2e]" style={{ width: 80, height: 80 }} />
           </div>
-          <button className="glass neon-border-purple rounded-xl px-4 py-2 text-sm font-semibold" style={{ color: "var(--neon-purple)" }}>
+          <button onClick={() => setEditMode(true)}
+            className="glass neon-border-purple rounded-xl px-4 py-2 text-sm font-semibold"
+            style={{ color: "var(--neon-purple)" }}>
             Редактировать
           </button>
         </div>
 
-        <h2 className="text-xl font-bold text-white mb-0.5">{user.name}</h2>
+        <h2 className="text-xl font-bold text-white mb-0.5">{name}</h2>
         <p className="text-sm mb-2" style={{ color: "rgba(255,255,255,0.4)" }}>{user.username}</p>
-        <p className="text-sm mb-4" style={{ color: "rgba(255,255,255,0.7)" }}>{user.bio}</p>
+        <p className="text-sm mb-4" style={{ color: "rgba(255,255,255,0.7)" }}>{bio}</p>
 
         <div className="grid grid-cols-3 gap-2 mb-4">
           {[
